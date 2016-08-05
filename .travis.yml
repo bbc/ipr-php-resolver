@@ -6,6 +6,10 @@ php:
   - 7
   - hhvm
 
+matrix:
+  allow_failures:
+  - php: hhvm
+
 install:
   - composer self-update
   - composer install
