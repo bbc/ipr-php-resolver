@@ -17,7 +17,7 @@ A simple requirement resolution system for plain-old-php objects.
 
 This is a standard composer library, so usual install rules apply:
 
-```php
+```sh
 $ composer require bbc/ipr-resolver
 ```
 
