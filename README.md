@@ -67,7 +67,7 @@ use BBC\iPlayerRadio\Resolver\HasRequirements;
 class Brand implements HasRequirements
 {
     ...
-    public function requires()
+    public function requires(array $flags = [])
     {
         $episodes = (yield new LatestEpisodesForProgramme($this->getPID(), 3));
         $this->latestEpisodes = ($episodes)? $episodes : [];
@@ -167,6 +167,30 @@ define what they *need* and let the Resolver and ResolverBackends do the work!
 
 > **Hint hint** imagine coupling this with the [WebserviceKit](http://github.com/bbc/ipr-php-webservicekit) library
 > with a ResolverBackend that looks for QueryInterface instances and then multiFetch()'s them... ;)
+
+You can also pass flags into the Resolver to help `requires()` functions work out what they need to do:
+
+```php
+class Brand implements HasRequirements
+{
+    public function requires(array $flags = [])
+    {
+        if (in_array('WITH_ATTRIBUTION', $flags)) {
+            $attribution = (yield new WithAttribution($this->parent));
+        }
+    }
+}
+```
+
+```php
+$resolver->resolve($brand, ['WITH_ATTRIBUTION']);
+```
+
+**Note**: all `requires()` functions see all flags, so keep them specific to avoid problems!
+
+If a requirement is not supported by any backend (none of the `canResolve()` functions return true), then a
+`BBC\iPlayerRadio\Resolver\UnresolvableRequirementException` will be thrown, contained within it the requirement
+that failed, which you can access with `getFailedRequirement()`.
 
 ## Resolver Backends
 

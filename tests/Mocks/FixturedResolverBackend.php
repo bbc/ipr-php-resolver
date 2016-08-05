@@ -9,7 +9,7 @@ use BBC\iPlayerRadio\Resolver\ResolverBackend;
  *
  * I considered naming this PromiscuousResolverBackend or SluiceResolverBackend but neither
  * seemed appropriate. This resolver backend is useful for unit tests where you just want to
- * return a given set of resolutions in order. So you can queue up Nitro/Blur responses for instance.
+ * return a given set of resolutions in order.
  *
  * The responses are pulled off one-per-requirement, and if there's multiple passes, we keep walking the
  * array, so you can use this with "nested" requirements.
