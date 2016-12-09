@@ -5,6 +5,7 @@ namespace BBC\iPlayerRadio\Resolver\Tests;
 use BBC\iPlayerRadio\Resolver\PHPUnit\TestCase;
 use BBC\iPlayerRadio\Resolver\Resolver;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\CircularBackend;
+use BBC\iPlayerRadio\Resolver\Tests\Mocks\MultiDArrayRequireBackend;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\MultiYieldBackend;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\ObjectRequiresCircular;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\ObjectRequiresNumber;
@@ -218,5 +219,26 @@ class ResolverTest extends TestCase
         $runs = $resolver->getRuns();
         $this->assertCount(1, $runs);
         $this->assertCount(6, $runs[0]); // phases
+    }
+
+    public function testResultMultiArrayRequirements()
+    {
+        $resolver = new Resolver();
+        $resolver
+            ->addBackend(new MultiDArrayRequireBackend())
+            ->addBackend(new RandomNumberBackend())
+            ->addBackend(new RandomStringBackend())
+        ;
+
+        $resolver->resolve(function () use (&$result) {
+            $result = (yield 'multi_d_yield');
+        });
+
+        $this->assertCount(1, $result);
+        $this->assertCount(3, $result[0]);
+
+        $this->assertInternalType('integer', $result[0][0]->number);
+        $this->assertInternalType('string', $result[0][1]->string);
+        $this->assertInternalType('integer', $result[0][2]->number);
     }
 }

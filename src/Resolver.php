@@ -159,7 +159,10 @@ class Resolver
 
                     // Add results into the pool of potentials:
                     $resultsArray = (is_array($result) || $result instanceof \ArrayAccess)? $result : [$result];
-                    foreach ($resultsArray as $singleResult) {
+
+                    // Use a recursive iterator for nested arrays:
+                    $iter = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($resultsArray, \RecursiveArrayIterator::CHILD_ARRAYS_ONLY));
+                    foreach ($iter as $singleResult) {
                         if (is_object($singleResult) && $singleResult instanceof HasRequirements) {
                             $pool[] = $singleResult->requires($flags);
                         }
