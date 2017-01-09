@@ -161,7 +161,13 @@ class Resolver
                     $resultsArray = (is_array($result) || $result instanceof \ArrayAccess)? $result : [$result];
 
                     // Use a recursive iterator for nested arrays:
-                    $iter = new \RecursiveIteratorIterator(new \RecursiveArrayIterator($resultsArray, \RecursiveArrayIterator::CHILD_ARRAYS_ONLY));
+                    $iter = ($resultsArray instanceof \Iterator)?
+                        $resultsArray
+                        :
+                        new \RecursiveIteratorIterator(
+                            new \RecursiveArrayIterator($resultsArray, \RecursiveArrayIterator::CHILD_ARRAYS_ONLY)
+                        )
+                    ;
                     foreach ($iter as $singleResult) {
                         if (is_object($singleResult) && $singleResult instanceof HasRequirements) {
                             $pool[] = $singleResult->requires($flags);
