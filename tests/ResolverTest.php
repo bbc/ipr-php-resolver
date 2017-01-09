@@ -5,6 +5,7 @@ namespace BBC\iPlayerRadio\Resolver\Tests;
 use BBC\iPlayerRadio\Resolver\PHPUnit\TestCase;
 use BBC\iPlayerRadio\Resolver\Resolver;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\CircularBackend;
+use BBC\iPlayerRadio\Resolver\Tests\Mocks\IteratorBackend;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\MultiDArrayRequireBackend;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\MultiYieldBackend;
 use BBC\iPlayerRadio\Resolver\Tests\Mocks\ObjectRequiresCircular;
@@ -240,5 +241,22 @@ class ResolverTest extends TestCase
         $this->assertInternalType('integer', $result[0][0]->number);
         $this->assertInternalType('string', $result[0][1]->string);
         $this->assertInternalType('integer', $result[0][2]->number);
+    }
+
+    public function testIteratorResult()
+    {
+        $resolver = new Resolver();
+        $resolver
+            ->addBackend(new RandomNumberBackend())
+            ->addBackend(new RandomStringBackend())
+            ->addBackend(new IteratorBackend());
+
+        $resolver->resolve(function () use (&$result) {
+            $result = (yield 'iterator');
+        });
+
+        $this->assertCount(2, $result);
+        $this->assertInternalType('string', $result[0]->string);
+        $this->assertInternalType('integer', $result[1]->number);
     }
 }
